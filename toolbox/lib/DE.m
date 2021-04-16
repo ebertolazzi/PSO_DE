@@ -1,28 +1,30 @@
 % Copyright (C) 2020 Enrico Bertolazzi
 %
-% This code is inspired from "deopt" by Rainer Storn, Ken Price, Arnold Neumaier, Jim Van Zandt.
-% Minimization of a user-supplied function using the differential evolution (DE) algorithm.
-% DE works best if [LB,UB] covers the region where the global minimum is expected.
-% DE is also somewhat sensitive to the choice of the step size F_WEIGHT.
-% A good initial guess is to choose F_WEIGHT from interval [0.5, 1], e.g. 0.8.
-% CROSS_OVER_PROB, the crossover probability constant from interval [0, 1] helps to
-% maintain the diversity of the population but should be close to 1 for most.
-% practical cases. Only separable problems do better with CR close to 0.
-% If the parameters are correlated, high values of CROSS_OVER_PROB work better.
-% The reverse is true for no correlation.
-%
-% The number of population members POP_SIZE is also not very critical.
-% A good initial guess is 10*DIM. Depending on the difficulty of the
-% problem POP_SIZE can be lower than 10*DIM or must be higher than 10*DIM
-% to achieve convergence.
+%> This code is inspired from "deopt" by Rainer Storn, Ken Price, Arnold Neumaier, Jim Van Zandt.
+%> Minimization of a user-supplied function using the differential evolution (DE) algorithm.
+%> DE works best if [LB,UB] covers the region where the global minimum is expected.
+%> DE is also somewhat sensitive to the choice of the step size F_WEIGHT.
+%> A good initial guess is to choose F_WEIGHT from interval [0.5, 1], e.g. 0.8.
+%> CROSS_OVER_PROB, the crossover probability constant from interval [0, 1] helps to
+%> maintain the diversity of the population but should be close to 1 for most.
+%> practical cases. Only separable problems do better with CR close to 0.
+%> If the parameters are correlated, high values of CROSS_OVER_PROB work better.
+%> The reverse is true for no correlation.
+%>
+%> The number of population members POP_SIZE is also not very critical.
+%> A good initial guess is 10*DIM. Depending on the difficulty of the
+%> problem POP_SIZE can be lower than 10*DIM or must be higher than 10*DIM
+%> to achieve convergence.
 %
 classdef DE < EvolutionaryBase
 
   %% MATLAB class wrapper for the underlying C++ class
   properties (SetAccess = protected, Hidden = true)
-    F_WEIGHT;        % DE-stepsize F_WEIGHT from interval [0, 2].
-    CROSS_OVER_PROB; % Crossover probability constant from interval [0, 1].
-    DE_STRATEGY;     %
+    %> DE-stepsize F_WEIGHT from interval [0, 2].
+    F_WEIGHT;
+    %> Crossover probability constant from interval [0, 1].
+    CROSS_OVER_PROB;
+    DE_STRATEGY;
     OLD_FITNESS;
   end
 

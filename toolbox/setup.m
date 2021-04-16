@@ -1,1 +1,2 @@
 addpath('lib');
+addpath('test');

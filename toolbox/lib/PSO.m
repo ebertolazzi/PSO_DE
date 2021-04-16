@@ -1,18 +1,20 @@
 % Copyright (C) 2020 Enrico Bertolazzi
 
-% PSO finds a minimum of a function of several variables using the particle swarm
-% optimization (PSO) algorithm originally introduced in 1995 by Kennedy andEberhart.
-% This algorithm was extended by Shi and Eberhart in 1998 through the
-% introduction of inertia factors to dampen the velocities of the particles.
-% In 2002, Clerc and Kennedy introduced a constriction factor in PSO, which was
-% later on shown to be superior to the inertia factors. Therefore, the algorithm
-% using a constriction factor was implemented here.
-%
-% PSO attempts to solve problems of the form:
-%
-%     minimize      F(X)
-%   LB <= X <= UB
-%
+%> PSO finds a minimum of a function of several variables using the particle swarm
+%> optimization (PSO) algorithm originally introduced in 1995 by Kennedy andEberhart.
+%> This algorithm was extended by Shi and Eberhart in 1998 through the
+%> introduction of inertia factors to dampen the velocities of the particles.
+%> In 2002, Clerc and Kennedy introduced a constriction factor in PSO, which was
+%> later on shown to be superior to the inertia factors. Therefore, the algorithm
+%> using a constriction factor was implemented here.
+%>
+%> PSO attempts to solve problems of the form:
+%>
+%> \f[ \begin{array}{l}
+%>      \mathrm{minimize}\quad F(X) \\
+%>      \qquad LB \le X \le UB
+%>    \end{array} \f]
+%>
 classdef PSO < EvolutionaryBase
 
   %% MATLAB class wrapper for the underlying C++ class
@@ -32,8 +34,8 @@ classdef PSO < EvolutionaryBase
       self.SOCIAL_ACC    = 1.3;
     end
     % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    %> calculate constriction factor from acceleration coefficients
     function setAcceleration( self, C_ACC, S_ACC )
-      % calculate constriction factor from acceleration coefficients
       ACC = C_ACC + S_ACC;
       if ACC <= 4
         % display message

@@ -15,6 +15,7 @@ classdef EvolutionaryBase < handle
     UB;            % Vector of upper bounds UB(1) ... UB(DIM) of initial population.
     DIM;           % Number of parameters of the objective function.
 
+    CURRENT_ITER;
     MAX_ITER;      % Maximum number of iterations (generations).
     MAX_TIME;      %
     MAX_FUN_EVALS; %
@@ -33,6 +34,9 @@ classdef EvolutionaryBase < handle
     BEST_FITNESS;  % Fitness of the best population elements during iterations
     GBEST_FITNESS; % History of the fitness for the global best population member
 
+    USER_PLOT;
+    USER_PLOT_FUN;
+
     TIME;          % elapsed time for computation
   end
 
@@ -49,10 +53,11 @@ classdef EvolutionaryBase < handle
       rand('state',sum(100*clock));
       self.POP_SIZE      = 10;
       self.MAX_ITER      = 2500;
-      self.MAX_FUN_EVALS = 100000;
-      self.TOLFUN        = 1e-3;
+      self.MAX_FUN_EVALS = 10000000;
+      self.TOLFUN        = 1e-6;
       self.MAX_TIME      = 2500;
       self.VERBOSE       = true;
+      self.USER_PLOT     = 0;
     end
     % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     function setPopolation( self, POP_SIZE )
@@ -79,11 +84,16 @@ classdef EvolutionaryBase < handle
       self.TOLFUN = TOLFUN;
     end
     % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    function setProblem( self, FUN, DIM, LB, UB )
+    function setPlotFunction( self, Pfun, nplot )
+      self.USER_PLOT     = nplot;
+      self.USER_PLOT_FUN = Pfun;
+    end
+    % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    function setProblem( self, FUN, LB, UB )
       self.FUN = FUN;
-      self.DIM = DIM;
       self.LB  = LB;
       self.UB  = UB;
+      self.DIM = length(LB);
     end
     % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     function info( self )
@@ -92,6 +102,14 @@ classdef EvolutionaryBase < handle
       fprintf('Best population element\n');
       disp( self.BEST_POP );
       fprintf( 'Global best fitness: %12.6g', self.GBEST_FITNESS(end) );
+    end
+    % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    function iter = getIter( self )
+      iter = self.CURRENT_ITER;
+    end
+    % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    function B = getBest( self )
+      B = self.GBEST;
     end
     % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     function EXITFLAG = optimize( self )
@@ -129,6 +147,8 @@ classdef EvolutionaryBase < handle
       % for each iteration....
       for nIter=1:self.MAX_ITER
 
+        self.CURRENT_ITER = nIter;
+
         WORST_FITNESS = max(self.FITNESS);
 
         % give user feedback on screen if requested
@@ -145,10 +165,15 @@ classdef EvolutionaryBase < handle
           drawnow;
         end
 
+        if (self.USER_PLOT > 0) && ( mod( nIter-1, self.USER_PLOT) == 0 )
+          feval( self.USER_PLOT_FUN, self.GBEST );
+          drawnow;
+        end
+
         self.OLD_POP = self.POP;
 
         % end the optimization if one of the stopping criteria is met
-        %% 1. difference between best and worst function evaluation in simplex is smaller than TOLFUN 
+        %% 1. difference between best and worst function evaluation in simplex is smaller than TOLFUN
         %% 2. maximum difference between the coordinates of the vertices in simplex is less than TOLX
         %% 3. no convergence,but maximum number of iterations has been reached
         %% 4. no convergence,but maximum time has been reached
